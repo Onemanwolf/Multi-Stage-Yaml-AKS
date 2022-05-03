@@ -37,6 +37,13 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Pipeline.Workspace)/s/kubernetes'
+        artifactName: 'manifests' 
+        publishLocation: 'pipeline'
+        
+
 - stage: Deploy
   displayName: 'DeploytoDev'
   dependsOn: Build
