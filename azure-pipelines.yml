@@ -37,3 +37,32 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+- stage: Deploy
+  displayName: 'Deploy to Dev'
+  dependsOn: Build
+  variables:
+      EnvironmentName: 'Development'
+      ClusterName: 'demoAKSCluster'
+  jobs:
+  - deployment: 'Deploy to Dev'
+    environment: 'Dev.dev-records'
+    pool: 
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: 'DownloadPipelineArtifact@2'
+              inputs:
+                buildType: 'current'
+                artifactName: 'manifests'
+                targetPath: $(Pipeline.Workspace)/manifests
+            - task: KubernetesManifest@0
+              inputs:
+               action: deploy
+               namespace: dev-records
+               manifests: 
+                 $(Pipeline.Workspace)/manifests/deployment.yml
+                 
+    
+
