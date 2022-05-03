@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demoapp
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: demoapp
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+        - name: demoapp
+          image: dockerdemoacr01.azurecr.io/demoapp:45
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 250m
+            limits:
+              cpu: 500m
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demoapp
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    app: demoapp
