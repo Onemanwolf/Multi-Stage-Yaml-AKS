@@ -38,13 +38,13 @@ stages:
         tags: |
           $(tag)
 - stage: Deploy
-  displayName: 'Deploy to Dev'
+  displayName: 'DeploytoDev'
   dependsOn: Build
   variables:
       EnvironmentName: 'Development'
       ClusterName: 'demoAKSCluster'
   jobs:
-  - deployment: 'Deploy to Dev'
+  - deployment: 'DeploytoDev'
     environment: 'Dev.dev-records'
     pool: 
       vmImage: $(vmImageName)
